@@ -3,13 +3,15 @@ package org.olafneumann.regex.generator.regex
 import org.olafneumann.regex.generator.util.HasRange
 
 class RecognizerMatch(
-    val patterns: List<String>,
+    private val patterns: List<String>,
     ranges: List<IntRange>,
     val recognizer: Recognizer,
     val title: String,
     val priority: Int = 0
 ) : HasRange {
     val ranges: List<IntRange>
+    var isCapturingGroup = false
+    var capturingGroupName: String? = null
     override val first: Int
     override val last: Int
     override val length: Int
@@ -26,6 +28,17 @@ class RecognizerMatch(
         this.last = this.ranges[this.ranges.size - 1].last
         this.length = last - first + 1
     }
+
+    fun getPattern(index: Int, includeCapturingGroup: Boolean = true): String =
+        if (isCapturingGroup && includeCapturingGroup) {
+            if (capturingGroupName != null) {
+                "(<${capturingGroupName}>${patterns[index]})"
+            } else {
+                "(${patterns[index]})"
+            }
+        } else {
+            patterns[index]
+        }
 
     fun hasSameRangesAs(other: RecognizerMatch): Boolean {
         if (ranges.size != other.ranges.size) {

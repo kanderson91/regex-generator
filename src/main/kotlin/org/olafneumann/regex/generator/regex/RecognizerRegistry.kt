@@ -1,4 +1,5 @@
 @file:Suppress("MaxLineLength")
+
 package org.olafneumann.regex.generator.regex
 
 import org.olafneumann.regex.generator.util.HasRange
@@ -118,7 +119,13 @@ object RecognizerRegistry {
                 val mainMatches = listOf(combination.element[0], combination.leftParent.rightParent)
                 SimpleRecognizer(
                     name = "Combination [${startMatch.recognizer.name} + ${mainMatches[0].recognizer.name}]",
-                    outputPattern = "(${startMatch.patterns[0]}(${mainMatches[0].patterns[0]}${mainMatches[1].patterns[0]})+)"
+                    outputPattern = "(${
+                        startMatch.getPattern(index = 0, includeCapturingGroup = false)
+                    }(${
+                        mainMatches[0].getPattern(index = 0, includeCapturingGroup = false)
+                    }${
+                        mainMatches[1].getPattern(index = 0, includeCapturingGroup = false)
+                    })+)"
                 )
             }
             .toSet()
@@ -146,7 +153,11 @@ object RecognizerRegistry {
         val rightPossibles = rightMatches.findFullMatch(rightMin, rightMax)
         return leftPossibles.flatMap { left -> rightPossibles.map { right -> left to right } }
             .filter { it.first.recognizer == it.second.recognizer }
-            .filter { it.first.recognizer !is EchoRecognizer || (it.first.recognizer is EchoRecognizer && it.first.patterns[0] == it.second.patterns[0]) }
+            .filter {
+                it.first.recognizer !is EchoRecognizer || (it.first.recognizer is EchoRecognizer && it.first.getPattern(
+                    index = 0, includeCapturingGroup = false
+                ) == it.second.getPattern(index = 0, includeCapturingGroup = false))
+            }
             .map { it.first }
     }
 

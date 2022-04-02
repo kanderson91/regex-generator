@@ -5,7 +5,13 @@ import kotlin.test.assertSame
 
 object RecognizersTestHelper {
     private fun assertMatchEquals(expected: RecognizerMatch, actual: RecognizerMatch) {
-        assertEquals(expected.patterns, actual.patterns, "Patterns")
+        for (index: Int in 0  until expected.ranges.size) {
+            assertEquals(
+                expected.getPattern(index = index, includeCapturingGroup = false),
+                actual.getPattern(index = index, includeCapturingGroup = false),
+                "Pattern $index"
+            )
+        }
         assertEquals(expected.ranges, actual.ranges, "Ranges")
         assertSame(expected.recognizer, actual.recognizer, "Recognizer")
         assertEquals(expected.title, actual.title, "Title")

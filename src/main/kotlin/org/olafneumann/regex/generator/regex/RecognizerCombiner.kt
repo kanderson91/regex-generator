@@ -8,7 +8,7 @@ object RecognizerCombiner {
     ): RegularExpression {
         val rangesToMatches = selectedMatches.flatMap { match ->
             match.ranges
-                .mapIndexed { index, range -> RegularExpressionPart(range, match.patterns[index], match = match) }
+                .mapIndexed { index, range -> RegularExpressionPart(range, match.getPattern(index), match = match) }
         }
             .sortedBy { it.range.first }
             .toList()
