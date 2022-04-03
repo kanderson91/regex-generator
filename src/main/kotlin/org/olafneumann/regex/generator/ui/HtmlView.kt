@@ -141,17 +141,17 @@ class HtmlView(
         }
     }
 
-    override fun showMatchingRecognizers(inputText: String, matches: Collection<MatchPresenter>) {
-        recognizerDisplayPart.showMatchingRecognizers(inputText, matches)
-    }
+    override fun showMatchingRecognizers(inputText: String, matches: Collection<MatchPresenter>)
+        = recognizerDisplayPart.showMatchingRecognizers(inputText, matches)
 
-    override fun showResultingPattern(regex: RecognizerCombiner.RegularExpression) {
-        resultDisplayPart.showResultingPattern(regex)
-    }
+    override fun updateInputTextMirror()
+        = recognizerDisplayPart.updateInputTextMirror()
 
-    override fun showUserGuide(initialStep: Boolean) {
-        userGuide.show(initialStep)
-    }
+    override fun showResultingPattern(regex: RecognizerCombiner.RegularExpression)
+        = resultDisplayPart.showResultingPattern(regex)
+
+    override fun showUserGuide(initialStep: Boolean)
+        = userGuide.show(initialStep)
 
     companion object {
         const val CLASS_MATCH_ROW = "rg-match-row"

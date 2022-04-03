@@ -58,6 +58,7 @@ class UiController : DisplayContract.Controller {
         matchPresenter.selectedMatch = if (matchPresenter.selected) null else recognizerMatch
 
         disableNotClickableSuggestions()
+        view.updateInputTextMirror()
     }
 
     override fun disableNotClickableSuggestions() {

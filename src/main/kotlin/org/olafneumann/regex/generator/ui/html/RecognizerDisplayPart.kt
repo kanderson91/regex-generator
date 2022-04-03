@@ -31,6 +31,8 @@ internal class RecognizerDisplayPart(
     private val matchPresenterToRowIndex = mutableMapOf<MatchPresenter, Int>()
     private var inputCharacterSpans = listOf<HTMLSpanElement>()
 
+    private var currentInputText = ""
+
     private fun createPaddedList(inputLength: Int, matches: Collection<MatchPresenter>): List<Pair<IntRange, RecognizerMatch?>> {
         val rangeToMatch = matches
             .asSequence()
@@ -73,6 +75,8 @@ internal class RecognizerDisplayPart(
     }
 
     fun showMatchingRecognizers(inputText: String, matches: Collection<MatchPresenter>) {
+        currentInputText = inputText
+
         // TODO remove CSS class iterator
         val indices = mutableMapOf<Int, Int>()
         fun nextCssClass(row: Int): String {
@@ -103,7 +107,11 @@ internal class RecognizerDisplayPart(
 
         animateResultDisplaySize(rows = rowElements)
 
-        showInputText(inputText)
+        updateInputTextMirror()
+    }
+
+    fun updateInputTextMirror() {
+        showInputText(currentInputText)
     }
 
     private fun distributeToRows(matches: Collection<MatchPresenter>): Map<MatchPresenter, Int> {

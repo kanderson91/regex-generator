@@ -18,6 +18,7 @@ interface DisplayContract {
         fun hideShortenWarning(immediately: Boolean = false)
 
         fun showMatchingRecognizers(inputText: String, matches: Collection<MatchPresenter>)
+        fun updateInputTextMirror()
         fun showResultingPattern(regex: RecognizerCombiner.RegularExpression)
     }
 
