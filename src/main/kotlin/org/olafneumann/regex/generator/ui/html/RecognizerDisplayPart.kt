@@ -11,6 +11,7 @@ import kotlinx.html.js.div
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.span
 import org.olafneumann.regex.generator.js.jQuery
+import org.olafneumann.regex.generator.regex.RecognizerMatch
 import org.olafneumann.regex.generator.ui.DisplayContract
 import org.olafneumann.regex.generator.ui.HtmlHelper
 import org.olafneumann.regex.generator.ui.HtmlView
@@ -30,15 +31,48 @@ internal class RecognizerDisplayPart(
     private val matchPresenterToRowIndex = mutableMapOf<MatchPresenter, Int>()
     private var inputCharacterSpans = listOf<HTMLSpanElement>()
 
+    private fun createPaddedList(inputLength: Int, matches: Collection<MatchPresenter>): List<Pair<IntRange, RecognizerMatch?>> {
+        val rangeToMatch = matches
+            .asSequence()
+            .mapNotNull { it.selectedMatch }
+            .map { match -> match.ranges.map { range -> range to match } }
+            .flatten()
+            .sortedBy { it.first.first }
+            .toList()
+
+        // Find first and last ranges
+        val startRange = rangeToMatch.firstOrNull()?.let { IntRange(0, it.first.first - 1) }
+        val endRange = rangeToMatch.lastOrNull()?.let { IntRange(it.first.last + 1, inputLength - 1) }
+        val wholeRange = if (rangeToMatch.isEmpty()) { IntRange(0, inputLength - 1) } else { null }
+
+        // find ranges in between
+        val rangesBetween = rangeToMatch
+            .zipWithNext()
+            .map { IntRange(it.first.first.last + 1, it.second.first.first - 1) }
+            .filter { !it.isEmpty() }
+        val allBetween: List<Pair<IntRange, RecognizerMatch?>> = (listOf(startRange, endRange, wholeRange) + rangesBetween)
+            .filterNotNull()
+            .filter { it.last > it.first }
+            .map { it to null }
+
+        return (allBetween + rangeToMatch)
+            .sortedBy { it.first.first }
+    }
+
     fun showInputText(inputText: String) {
         textDisplay.clear()
         inputCharacterSpans = inputText.map { document.create.span(classes = "rg-char") { +it.toString() } }.toList()
-        inputCharacterSpans.forEach { textDisplay.appendChild(it) }
+
+        createPaddedList(inputLength = inputText.length, matches = matchPresenterToRowIndex.keys)
+            .map { pair -> pair to pair.first.mapNotNull { inputCharacterSpans.getOrNull(it) } }
+            .forEach { pair ->
+                val span = document.create.span(classes = "rg-char-group")
+                pair.second.forEach { span.appendChild(it) }
+                textDisplay.appendChild(span)
+            }
     }
 
     fun showMatchingRecognizers(inputText: String, matches: Collection<MatchPresenter>) {
-        showInputText(inputText)
-
         // TODO remove CSS class iterator
         val indices = mutableMapOf<Int, Int>()
         fun nextCssClass(row: Int): String {
@@ -68,6 +102,8 @@ internal class RecognizerDisplayPart(
         }
 
         animateResultDisplaySize(rows = rowElements)
+
+        showInputText(inputText)
     }
 
     private fun distributeToRows(matches: Collection<MatchPresenter>): Map<MatchPresenter, Int> {
