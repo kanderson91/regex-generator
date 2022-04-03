@@ -10,6 +10,7 @@ import kotlinx.html.dom.create
 import kotlinx.html.js.div
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.span
+import org.olafneumann.regex.generator.js.PopoverOptions
 import org.olafneumann.regex.generator.js.jQuery
 import org.olafneumann.regex.generator.regex.RecognizerMatch
 import org.olafneumann.regex.generator.ui.DisplayContract
@@ -68,9 +69,20 @@ internal class RecognizerDisplayPart(
         createPaddedList(inputLength = inputText.length, matches = matchPresenterToRowIndex.keys)
             .map { pair -> pair to pair.first.mapNotNull { inputCharacterSpans.getOrNull(it) } }
             .forEach { pair ->
-                val span = document.create.span(classes = "rg-char-group")
-                pair.second.forEach { span.appendChild(it) }
-                textDisplay.appendChild(span)
+                val charGroup = document.create.span(classes = "rg-char-group")
+                pair.second.forEach { charGroup.appendChild(it) }
+                textDisplay.appendChild(charGroup)
+
+                pair.first.second?.let {
+                    jQuery(charGroup).popover(
+                        PopoverOptions(
+                            title = "Capturing group",
+                            contentString = "To create a capturing group for this '${it.title}', check this.",
+                            placement = "top",
+                            trigger = "click"
+                        ).toJson()
+                    )
+                }
             }
     }
 
