@@ -8,7 +8,6 @@ import kotlinx.html.*
 import kotlinx.html.dom.create
 import kotlinx.html.js.div
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.js.onInputFunction
 import kotlinx.html.js.span
 import org.olafneumann.regex.generator.js.Popover
 import org.olafneumann.regex.generator.js.jQuery
@@ -78,34 +77,11 @@ internal class RecognizerDisplayPart(
 
                 pair.first.second?.let { match ->
                     charGroup.classList.toggle(HtmlView.CLASS_CHAR_SELECTED, true)
-                    val id = "cap_group_checkbox_${pair.first.first.first.toString()}"
-                    val popover = Popover(
+                    val popover = CapturingGroupPopover(
                         element = charGroup,
-                        //contentString = "To create a capturing group for this '${it.title}', check this.",
-                        contentElement = document.create.div {
-                            div {
-                                val check = input {
-                                    type = InputType.checkBox
-                                    this.id = id
-                                    checked = match.isCapturingGroup
-                                    onInputFunction = { e ->
-                                        console.log(e, match.isCapturingGroup)
-                                        match.isCapturingGroup = checked
-                                    }
-                                }
-                                label {
-                                    this.htmlFor = id
-                                    +" Capturing group"
-                                }
-                            }
-                            div {
-
-                            }
-                        },
-                        placement = "top",
-                        html = true,
-                        trigger = "manual"
-                    )
+                        match = match,
+                        recalculationTrigger = { presenter.computeOutputPattern() }
+                    ).popover
                     charGroupSpansToPopovers[charGroup] = popover
                     charGroup.onclick = { _ -> popover.toggle() }
                 }

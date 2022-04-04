@@ -11,7 +11,7 @@ class RecognizerMatch(
 ) : HasRange {
     val ranges: List<IntRange>
     var isCapturingGroup = false
-    var capturingGroupName: String? = null
+    var capturingGroupName: String = ""
     override val first: Int
     override val last: Int
     override val length: Int

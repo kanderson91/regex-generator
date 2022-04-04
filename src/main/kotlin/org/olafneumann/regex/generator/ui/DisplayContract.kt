@@ -28,6 +28,7 @@ interface DisplayContract {
         fun onSuggestionClick(recognizerMatch: RecognizerMatch)
         fun onOptionsChange(options: RecognizerCombiner.Options)
         fun disableNotClickableSuggestions()
+        fun computeOutputPattern()
 
         val matchPresenters: Collection<MatchPresenter>
         val allRecognizerMatcher: Collection<RecognizerMatch>
