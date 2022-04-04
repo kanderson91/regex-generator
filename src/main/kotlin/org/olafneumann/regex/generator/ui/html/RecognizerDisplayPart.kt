@@ -4,7 +4,8 @@ import kotlinx.browser.document
 import kotlinx.dom.addClass
 import kotlinx.dom.clear
 import kotlinx.dom.removeClass
-import kotlinx.html.*
+import kotlinx.html.a
+import kotlinx.html.div
 import kotlinx.html.dom.create
 import kotlinx.html.js.div
 import kotlinx.html.js.onClickFunction
@@ -21,6 +22,7 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLSpanElement
 import kotlin.js.json
 
+@Suppress("TooManyFunctions")
 internal class RecognizerDisplayPart(
     private val presenter: DisplayContract.Controller
 ) {
@@ -33,34 +35,6 @@ internal class RecognizerDisplayPart(
     private var inputCharacterSpans = listOf<HTMLSpanElement>()
 
     private var currentInputText = ""
-
-    private fun createPaddedList(inputLength: Int, matches: Collection<MatchPresenter>): List<Pair<IntRange, RecognizerMatch?>> {
-        val rangeToMatch = matches
-            .asSequence()
-            .mapNotNull { it.selectedMatch }
-            .map { match -> match.ranges.map { range -> range to match } }
-            .flatten()
-            .sortedBy { it.first.first }
-            .toList()
-
-        // Find first and last ranges
-        val startRange = rangeToMatch.firstOrNull()?.let { IntRange(0, it.first.first - 1) }
-        val endRange = rangeToMatch.lastOrNull()?.let { IntRange(it.first.last + 1, inputLength - 1) }
-        val wholeRange = if (rangeToMatch.isEmpty()) { IntRange(0, inputLength - 1) } else { null }
-
-        // find ranges in between
-        val rangesBetween = rangeToMatch
-            .zipWithNext()
-            .map { IntRange(it.first.first.last + 1, it.second.first.first - 1) }
-            .filter { !it.isEmpty() }
-        val allBetween: List<Pair<IntRange, RecognizerMatch?>> = (listOf(startRange, endRange, wholeRange) + rangesBetween)
-            .filterNotNull()
-            .filter { it.last > it.first }
-            .map { it to null }
-
-        return (allBetween + rangeToMatch)
-            .sortedBy { it.first.first }
-    }
 
     fun showInputText(inputText: String) {
         charGroupSpansToPopovers.values.forEach { it.dispose() }
@@ -227,5 +201,41 @@ internal class RecognizerDisplayPart(
 
     companion object {
         private fun Int.toCharacterUnits() = "${this}ch"
+
+        private fun createPaddedList(
+            inputLength: Int,
+            matches: Collection<MatchPresenter>
+        ): List<Pair<IntRange, RecognizerMatch?>> {
+            val rangeToMatch = matches
+                .asSequence()
+                .mapNotNull { it.selectedMatch }
+                .map { match -> match.ranges.map { range -> range to match } }
+                .flatten()
+                .sortedBy { it.first.first }
+                .toList()
+
+            // Find first and last ranges
+            val startRange = rangeToMatch.firstOrNull()?.let { IntRange(0, it.first.first - 1) }
+            val endRange = rangeToMatch.lastOrNull()?.let { IntRange(it.first.last + 1, inputLength - 1) }
+            val wholeRange = if (rangeToMatch.isEmpty()) {
+                IntRange(0, inputLength - 1)
+            } else {
+                null
+            }
+
+            // find ranges in between
+            val rangesBetween = rangeToMatch
+                .zipWithNext()
+                .map { IntRange(it.first.first.last + 1, it.second.first.first - 1) }
+                .filter { !it.isEmpty() }
+            val allBetween: List<Pair<IntRange, RecognizerMatch?>> =
+                (listOf(startRange, endRange, wholeRange) + rangesBetween)
+                    .filterNotNull()
+                    .filter { it.last > it.first }
+                    .map { it to null }
+
+            return (allBetween + rangeToMatch)
+                .sortedBy { it.first.first }
+        }
     }
 }

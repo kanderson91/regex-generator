@@ -2,20 +2,20 @@ package org.olafneumann.regex.generator.ui.html
 
 import com.benasher44.uuid.uuid4
 import kotlinx.browser.document
-import kotlinx.html.*
+import kotlinx.html.InputType
+import kotlinx.html.div
 import kotlinx.html.dom.create
-import kotlinx.html.injector.CustomCapture
+import kotlinx.html.id
 import kotlinx.html.injector.InjectByClassName
-import kotlinx.html.injector.InjectCapture
 import kotlinx.html.injector.inject
-import kotlinx.html.js.div
+import kotlinx.html.input
+import kotlinx.html.js.form
 import kotlinx.html.js.onInputFunction
+import kotlinx.html.label
 import org.olafneumann.regex.generator.js.Popover
 import org.olafneumann.regex.generator.regex.RecognizerMatch
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.HTMLLabelElement
-import org.w3c.dom.get
 import kotlin.properties.Delegates
 
 class CapturingGroupPopover(
@@ -26,31 +26,29 @@ class CapturingGroupPopover(
     companion object {
         private const val CLASS_CAP_CHECK = "rg-capturing-group-check"
         private const val CLASS_CAP_NAME = "rg-capturing-group-name"
-        private const val CLASS_CAP_NAME_DIV = "rg-capturing-group-name-div"
+        // private const val CLASS_CAP_NAME_DIV = "rg-capturing-group-name-div"
     }
 
     private val id = uuid4().toString().replace('-', '_')
     private val idCheck = id + "_check"
     private val idName = id + "_name"
-    private val idNameDiv = id + "_name_div"
+
+    // private val idNameDiv = id + "_name_div"
     val popover: Popover
     private val elements = Elements()
 
     init {
         popover = Popover(
             element = element,
-            contentElement = document.create.inject(elements, listOf(
-                InjectByClassName(CLASS_CAP_CHECK) to Elements::checkbox,
-                InjectByClassName(CLASS_CAP_NAME) to Elements::nameText,
-                InjectById(idNameDiv) to Elements::nameDiv
-            )).div {
-                div {
-                    label {
-                        this.htmlFor = idCheck
-                        +"Capturing group:"
-                    }
-                    +" "
-                    input(type = InputType.checkBox, classes= CLASS_CAP_CHECK) {
+            contentElement = document.create.inject(
+                elements, listOf(
+                    InjectByClassName(CLASS_CAP_CHECK) to Elements::checkbox,
+                    InjectByClassName(CLASS_CAP_NAME) to Elements::nameText,
+                    //InjectById(idNameDiv) to Elements::nameDiv
+                )
+            ).form {
+                div(classes = "form-group form-check") {
+                    input(type = InputType.checkBox, classes = "$CLASS_CAP_CHECK form-check-input") {
                         this.id = idCheck
                         checked = match.isCapturingGroup
                         onInputFunction = { _ ->
@@ -59,16 +57,17 @@ class CapturingGroupPopover(
                             triggerRegexRecalculation()
                         }
                     }
-                }
-                div {
-                    id = idNameDiv
-                    label {
-                        this.htmlFor = idName
-                        +"Name: "
+                    label(classes = "form-check-label") {
+                        this.htmlFor = idCheck
+                        +"Capturing group"
                     }
-                    input(type = InputType.text, classes = CLASS_CAP_NAME) {
+                }
+                div(classes = "form-group") {
+                    // id = idNameDiv
+                    input(type = InputType.search, classes = "$CLASS_CAP_NAME form-control-sm") {
                         this.id = idName
                         value = match.capturingGroupName
+                        placeholder = "name (optional)"
                         onInputFunction = { _ ->
                             match.capturingGroupName = elements.nameText.value.trim()
                             triggerRegexRecalculation()
@@ -76,7 +75,6 @@ class CapturingGroupPopover(
                     }
                 }
             },
-            html = true,
             trigger = "manual",
         )
         showNameDiv(show = match.isCapturingGroup)
@@ -90,9 +88,9 @@ class CapturingGroupPopover(
         recalculationTrigger()
     }
 
-    private class InjectById(private val id: String) : CustomCapture {
+    /*private class InjectById(private val id: String) : CustomCapture {
         override fun apply(element: HTMLElement): Boolean = element.id == id
-    }
+    }*/
 
     private class Elements {
         var checkbox: HTMLInputElement by Delegates.notNull()
