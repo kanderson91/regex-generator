@@ -4,13 +4,13 @@ import kotlinx.browser.document
 import kotlinx.dom.addClass
 import kotlinx.dom.clear
 import kotlinx.dom.removeClass
-import kotlinx.html.a
-import kotlinx.html.div
+import kotlinx.html.*
 import kotlinx.html.dom.create
 import kotlinx.html.js.div
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onInputFunction
 import kotlinx.html.js.span
-import org.olafneumann.regex.generator.js.PopoverOptions
+import org.olafneumann.regex.generator.js.Popover
 import org.olafneumann.regex.generator.js.jQuery
 import org.olafneumann.regex.generator.regex.RecognizerMatch
 import org.olafneumann.regex.generator.ui.DisplayContract
@@ -30,6 +30,7 @@ internal class RecognizerDisplayPart(
 
     // Stuff needed to display the regex
     private val matchPresenterToRowIndex = mutableMapOf<MatchPresenter, Int>()
+    private var charGroupSpansToPopovers = mutableMapOf<HTMLSpanElement, Popover>()
     private var inputCharacterSpans = listOf<HTMLSpanElement>()
 
     private var currentInputText = ""
@@ -63,6 +64,8 @@ internal class RecognizerDisplayPart(
     }
 
     fun showInputText(inputText: String) {
+        charGroupSpansToPopovers.values.forEach { it.dispose() }
+        charGroupSpansToPopovers.clear()
         textDisplay.clear()
         inputCharacterSpans = inputText.map { document.create.span(classes = "rg-char") { +it.toString() } }.toList()
 
@@ -73,15 +76,38 @@ internal class RecognizerDisplayPart(
                 pair.second.forEach { charGroup.appendChild(it) }
                 textDisplay.appendChild(charGroup)
 
-                pair.first.second?.let {
-                    jQuery(charGroup).popover(
-                        PopoverOptions(
-                            title = "Capturing group",
-                            contentString = "To create a capturing group for this '${it.title}', check this.",
-                            placement = "top",
-                            trigger = "click"
-                        ).toJson()
+                pair.first.second?.let { match ->
+                    charGroup.classList.toggle(HtmlView.CLASS_CHAR_SELECTED, true)
+                    val id = "cap_group_checkbox_${pair.first.first.first.toString()}"
+                    val popover = Popover(
+                        element = charGroup,
+                        //contentString = "To create a capturing group for this '${it.title}', check this.",
+                        contentElement = document.create.div {
+                            div {
+                                val check = input {
+                                    type = InputType.checkBox
+                                    this.id = id
+                                    checked = match.isCapturingGroup
+                                    onInputFunction = { e ->
+                                        console.log(e, match.isCapturingGroup)
+                                        match.isCapturingGroup = checked
+                                    }
+                                }
+                                label {
+                                    this.htmlFor = id
+                                    +" Capturing group"
+                                }
+                            }
+                            div {
+
+                            }
+                        },
+                        placement = "top",
+                        html = true,
+                        trigger = "manual"
                     )
+                    charGroupSpansToPopovers[charGroup] = popover
+                    charGroup.onclick = { _ -> popover.toggle() }
                 }
             }
     }
