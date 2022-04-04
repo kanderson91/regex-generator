@@ -35,24 +35,6 @@ external class JQuery {
     fun stop()
 
     fun popover(options: Json)
+    fun popover(command: String)
 }
 
-class PopoverOptions(
-    private val container: String = "body",
-    private val contentString: String? = null,
-    private val contentElement: HTMLElement? = null,
-    private val html: Boolean = false,
-    private val placement: String = "right",
-    private val title: String = "",
-    private val trigger: String = "click"
-) {
-    fun toJson()
-        = json(
-            "container" to container,
-            "content" to (contentString ?: contentElement),
-            "html" to html,
-            "placement" to placement,
-            "title" to title,
-            "trigger" to trigger
-        )
-}
