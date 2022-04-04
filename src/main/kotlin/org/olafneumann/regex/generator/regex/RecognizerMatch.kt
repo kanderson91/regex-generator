@@ -31,8 +31,8 @@ class RecognizerMatch(
 
     fun getPattern(index: Int, includeCapturingGroup: Boolean = true): String =
         if (isCapturingGroup && includeCapturingGroup) {
-            if (capturingGroupName != null) {
-                "(<${capturingGroupName}>${patterns[index]})"
+            if (capturingGroupName.isNotBlank()) {
+                "(?<${capturingGroupName}>${patterns[index]})"
             } else {
                 "(${patterns[index]})"
             }
