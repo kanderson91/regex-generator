@@ -6,6 +6,7 @@ import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.dom.create
 import kotlinx.html.id
+import kotlinx.html.injector.CustomCapture
 import kotlinx.html.injector.InjectByClassName
 import kotlinx.html.injector.inject
 import kotlinx.html.input
@@ -26,14 +27,13 @@ class CapturingGroupPopover(
     companion object {
         private const val CLASS_CAP_CHECK = "rg-capturing-group-check"
         private const val CLASS_CAP_NAME = "rg-capturing-group-name"
-        // private const val CLASS_CAP_NAME_DIV = "rg-capturing-group-name-div"
     }
 
     private val id = uuid4().toString().replace('-', '_')
     private val idCheck = id + "_check"
     private val idName = id + "_name"
 
-    // private val idNameDiv = id + "_name_div"
+    private val idNameDiv = id + "_name_div"
     val popover: Popover
     private val elements = Elements()
 
@@ -44,7 +44,7 @@ class CapturingGroupPopover(
                 elements, listOf(
                     InjectByClassName(CLASS_CAP_CHECK) to Elements::checkbox,
                     InjectByClassName(CLASS_CAP_NAME) to Elements::nameText,
-                    //InjectById(idNameDiv) to Elements::nameDiv
+                    InjectById(idNameDiv) to Elements::nameDiv
                 )
             ).form {
                 div(classes = "form-group form-check") {
@@ -63,8 +63,8 @@ class CapturingGroupPopover(
                     }
                 }
                 div(classes = "form-group") {
-                    // id = idNameDiv
-                    input(type = InputType.search, classes = "$CLASS_CAP_NAME form-control-sm") {
+                    id = idNameDiv
+                    input(type = InputType.text, classes = "$CLASS_CAP_NAME form-control-sm") {
                         this.id = idName
                         value = match.capturingGroupName
                         placeholder = "name (optional)"
@@ -88,9 +88,9 @@ class CapturingGroupPopover(
         recalculationTrigger()
     }
 
-    /*private class InjectById(private val id: String) : CustomCapture {
+    private class InjectById(private val id: String) : CustomCapture {
         override fun apply(element: HTMLElement): Boolean = element.id == id
-    }*/
+    }
 
     private class Elements {
         var checkbox: HTMLInputElement by Delegates.notNull()
