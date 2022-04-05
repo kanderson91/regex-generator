@@ -19,9 +19,10 @@ class Popover(
     }
 
     // fun show() = jquery.popover("show")
-    // fun hide() = jquery.popover("hide")
+    fun hide() = jquery.popover("hide")
     fun dispose() = jquery.popover("dispose")
     fun toggle() = jquery.popover("toggle")
+    fun update() = jquery.popover("update")
 
     private fun createOptionsJson()
             = json(

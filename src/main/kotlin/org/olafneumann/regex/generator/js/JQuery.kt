@@ -2,7 +2,6 @@ package org.olafneumann.regex.generator.js
 
 import org.w3c.dom.HTMLElement
 import kotlin.js.Json
-import kotlin.js.json
 
 @JsName("$")
 external fun jQuery(id: String): JQuery
@@ -12,7 +11,7 @@ external fun jQuery(element: HTMLElement): JQuery
 @Suppress("TooManyFunctions")
 external class JQuery {
     @Suppress("UnusedPrivateMember")
-    fun on(type: String, callback: () -> Unit)
+    fun on(type: String, callback: (e: dynamic) -> Unit)
     fun slideDown(): JQuery
     fun slideUp(): JQuery
     fun hide(): JQuery

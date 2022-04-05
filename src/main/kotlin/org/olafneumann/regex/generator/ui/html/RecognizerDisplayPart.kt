@@ -10,6 +10,7 @@ import kotlinx.html.dom.create
 import kotlinx.html.js.div
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.span
+import org.olafneumann.regex.generator.js.JQuery
 import org.olafneumann.regex.generator.js.Popover
 import org.olafneumann.regex.generator.js.jQuery
 import org.olafneumann.regex.generator.regex.RecognizerMatch
@@ -56,8 +57,17 @@ internal class RecognizerDisplayPart(
                         match = match,
                         recalculationTrigger = { presenter.computeOutputPattern() }
                     ).popover
+                    jQuery("body").on("click") { e ->
+                        val target: HTMLElement = e.target as HTMLElement
+                        if (target.closest(".popover") == null) {
+                            charGroupSpansToPopovers.values.forEach { it.hide() }
+                        }
+                    }
                     charGroupSpansToPopovers[charGroup] = popover
-                    charGroup.onclick = { _ -> popover.toggle() }
+                    charGroup.onclick = { e ->
+                        popover.toggle()
+                        e.stopPropagation()
+                    }
                 }
             }
     }

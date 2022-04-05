@@ -82,6 +82,7 @@ class CapturingGroupPopover(
 
     private fun showNameDiv(show: Boolean) {
         elements.nameDiv.style.display = if (show) "block" else "none"
+        popover.update()
     }
 
     private fun triggerRegexRecalculation() {
