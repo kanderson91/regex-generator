@@ -102,6 +102,12 @@ At the moment there are 28 patterns of different complexity integrated in ``rege
 
 In the final stage this Regex Generator shall support a wide range of use cases. Feel free to suggest new patterns via the [issues](https://github.com/noxone/regex-generator/issues/new?assignees=&labels=&template=add-pattern.md&title=).
 
+### Capturing Groups
+
+Regex generator supports the simple definition of capturing groups. It is possible to mark one single regular expression found in your text as a capturing group.
+
+Combining matches to more sophisticated capturing groups is not yet supported.
+
 ## More ideas
 
 More ideas for new features or how to improve the application are very welcome. Please add them to the [Github issues](https://github.com/noxone/regex-generator/issues).
