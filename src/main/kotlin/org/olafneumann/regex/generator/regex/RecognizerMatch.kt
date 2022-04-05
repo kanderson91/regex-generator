@@ -7,6 +7,7 @@ class RecognizerMatch(
     ranges: List<IntRange>,
     val recognizer: Recognizer,
     val title: String,
+    val allowCapturingGroups: Boolean,
     val priority: Int = 0
 ) : HasRange {
     val ranges: List<IntRange>

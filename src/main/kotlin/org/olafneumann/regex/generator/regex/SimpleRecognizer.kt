@@ -17,7 +17,8 @@ class SimpleRecognizer(
                     patterns = listOf(outputPattern),
                     ranges = listOf(getMainGroupRange(result)),
                     recognizer = this,
-                    title = name
+                    title = name,
+                    allowCapturingGroups = true
                 )
             }.toList()
 

@@ -209,6 +209,7 @@ internal class RecognizerDisplayPart(
             val rangeToMatch = matches
                 .asSequence()
                 .mapNotNull { it.selectedMatch }
+                .filter { it.allowCapturingGroups }
                 .map { match -> match.ranges.map { range -> range to match } }
                 .flatten()
                 .sortedBy { it.first.first }

@@ -20,7 +20,8 @@ class EchoRecognizer(
                     ranges = listOf(result.range),
                     recognizer = this,
                     title = "$name (${result.value})",
-                    priority = priority
+                    priority = priority,
+                    allowCapturingGroups = true
                 )
             }.toList()
 }

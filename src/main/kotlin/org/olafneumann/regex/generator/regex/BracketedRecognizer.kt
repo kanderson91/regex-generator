@@ -48,14 +48,16 @@ class BracketedRecognizer(
             patterns = listOf(startPattern, endPattern),
             ranges = listOf(startRange, endRange),
             recognizer = this,
-            title = name
+            title = name,
+            allowCapturingGroups = false
         )
 
         val innerMatch = RecognizerMatch(
             patterns = listOf(centerPattern.pattern),
             ranges = listOf(centerRange),
             recognizer = this,
-            title = "$name content (${centerPattern.title.ifEmpty { "center part" }})"
+            title = "$name content (${centerPattern.title.ifEmpty { "center part" }})",
+            allowCapturingGroups = false
         )
 
         return mutableListOf(outerMatch, innerMatch)
