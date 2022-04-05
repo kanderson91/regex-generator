@@ -12,13 +12,15 @@ class RecognizerCombinerTest {
                 patterns = listOf("[a-z]+"),
                 ranges = listOf(IntRange(0, 2)),
                 recognizer = recognizer,
-                title = "dummy"
+                title = "dummy",
+                allowCapturingGroups = true
             ),
             RecognizerMatch(
                 patterns = listOf("[a-z]+"),
                 ranges = listOf(IntRange(6, 8)),
                 recognizer = recognizer,
-                title = "dummy"
+                title = "dummy",
+                allowCapturingGroups = true
             )
         )
 

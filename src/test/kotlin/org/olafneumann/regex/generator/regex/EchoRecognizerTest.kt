@@ -15,13 +15,15 @@ class EchoRecognizerTest {
             patterns = listOf("123"),
             ranges = listOf(IntRange(3, 5)),
             recognizer = recognizer,
-            title = "Exact number (123)"
+            title = "Exact number (123)",
+            allowCapturingGroups = true
         )
         val no2 = RecognizerMatch(
             patterns = listOf("67"),
             ranges = listOf(IntRange(15, 16)),
             recognizer = recognizer,
-            title = "Exact number (67)"
+            title = "Exact number (67)",
+            allowCapturingGroups = true
         )
         assertMatchesEqual(expected = listOf(no1, no2), actual = result)
     }
