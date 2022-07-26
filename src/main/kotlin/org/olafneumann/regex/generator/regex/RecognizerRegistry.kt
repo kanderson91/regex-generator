@@ -7,7 +7,6 @@ import org.olafneumann.regex.generator.regex.BracketedRecognizer.CenterPattern
 object RecognizerRegistry {
     private val recognizers = listOf(
         EchoRecognizer("Character", ".", priority = 10),
-        EchoRecognizer("Exact number", "[0-9]{2,}"),
         EchoRecognizer("Repeating character", "(.)\\1{2,}", outputRegexBuilder = "%1\$s+"),
         SimpleRecognizer("One whitespace", "\\s"),
         SimpleRecognizer("Whitespaces", "\\s+"),
@@ -15,6 +14,7 @@ object RecognizerRegistry {
         SimpleRecognizer("Multiple characters", "[a-zA-Z]+"),
         SimpleRecognizer("Digit", "\\d"),
         SimpleRecognizer("Number", "[0-9]+"),
+        EchoRecognizer("Exact number", "[0-9]{2,}"),
         SimpleRecognizer("Decimal number", "[0-9]*\\.[0-9]+"),
         SimpleRecognizer("Floating point number (with optional exponent)", "([+-]?(?=\\.\\d|\\d)(?:\\d+)?(?:\\.?\\d*))(?:[eE]([+-]?\\d+))?"),
         SimpleRecognizer("URL encoded character", "%[0-9A-Fa-f][0-9A-Fa-f]"),
@@ -22,8 +22,9 @@ object RecognizerRegistry {
         SimpleRecognizer("Month", "(0?[1-9]|[1][0-2])", searchPattern = "(?:^|\\D)(%s)($|\\D)"),
         SimpleRecognizer("Hour", "(0?[0-9]|1[0-9]|2[0-3])", searchPattern = "(?:^|\\D)(%s)($|\\D)"),
         SimpleRecognizer("Minute/ Second", "(0?[0-9]|[1-5][0-9])", searchPattern = "(?:^|\\D)(%s)($|\\D)"),
-        SimpleRecognizer("Date", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
+        SimpleRecognizer("Date", "(?<!\\.)(?:(?:0?[1-9])|10|11|12)[-\\/]\\s?(?:(?:[12]\\d)|(?:3[01])|(?:0?[1-9]))[-\\/]\\s?(?:19|20)?\\d{2}(?!\\.\\d)"),
         SimpleRecognizer("Time", "[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?"),
+        SimpleRecognizer("Study ID + Site ID + Patient ID", "\\d{2}-\\d{2}-\\d{4}"),
         SimpleRecognizer(
             "ISO8601",
             "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?"

@@ -182,6 +182,8 @@ class HtmlView(
         const val ID_BUTTON_SHARE_LINK = "rg_button_copy_share_link"
         const val ID_TEXT_SHARE_LINK = "rg_result_link"
 
+        const val ID_WIZARD_TABLE = "wizard_table"
+
         const val SEARCH_SAMPLE_REGEX = "sampleText"
         const val SEARCH_FLAGS = "flags"
         const val SEARCH_ONLY_PATTERNS = "onlyPatterns"

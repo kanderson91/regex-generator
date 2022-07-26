@@ -2,6 +2,7 @@ package org.olafneumann.regex.generator.ui
 
 import org.olafneumann.regex.generator.regex.RecognizerCombiner
 import org.olafneumann.regex.generator.regex.RecognizerMatch
+import org.olafneumann.regex.generator.ui.html.WizardDisplay
 
 interface DisplayContract {
     interface View {
@@ -27,9 +28,11 @@ interface DisplayContract {
         fun onSuggestionClick(recognizerMatch: RecognizerMatch)
         fun onOptionsChange(options: RecognizerCombiner.Options)
         fun disableNotClickableSuggestions()
+        fun onWizardChanges()
 
         val matchPresenters: Collection<MatchPresenter>
         val allRecognizerMatcher: Collection<RecognizerMatch>
         val selectedRecognizerMatches: Collection<RecognizerMatch>
+        val wizardDisplay: WizardDisplay
     }
 }

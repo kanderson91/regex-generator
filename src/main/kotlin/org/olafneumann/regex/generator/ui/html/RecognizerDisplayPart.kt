@@ -67,6 +67,14 @@ internal class RecognizerDisplayPart(
             applyListenersForUserInput(matchPresenter, element, cssClass)
         }
 
+        val rowMap = mutableMapOf<Int, List<MatchPresenter>>()
+        matchPresenterToRowIndex.forEach { (matchPresenter, rowIndex) ->
+            rowMap[rowIndex] = rowMap[rowIndex] ?: mutableListOf<MatchPresenter>()
+            val row = rowMap[rowIndex]!!.toMutableList()
+            row += matchPresenter
+            rowMap[rowIndex] = row
+        }
+
         animateResultDisplaySize(rows = rowElements)
     }
 

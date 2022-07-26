@@ -4,12 +4,15 @@ import kotlinx.browser.window
 import org.olafneumann.regex.generator.regex.RecognizerCombiner
 import org.olafneumann.regex.generator.regex.RecognizerMatch
 import org.olafneumann.regex.generator.regex.RecognizerRegistry
+import org.olafneumann.regex.generator.regex.TextSplitter
 import org.olafneumann.regex.generator.ui.html.CookieBanner
+import org.olafneumann.regex.generator.ui.html.WizardDisplay
 
 
 class UiController : DisplayContract.Controller {
     private val view: DisplayContract.View = HtmlView(this, MAX_INPUT_LENGTH)
     override var matchPresenters = listOf<MatchPresenter>()
+    override var wizardDisplay = WizardDisplay(TextSplitter(view.inputText), this)
 
     init {
         // remove warning that is not required
@@ -46,7 +49,19 @@ class UiController : DisplayContract.Controller {
         matchPresenters = matchGroups.map { it.toPresentation() }
 
         view.showMatchingRecognizers(newInput, matchPresenters)
-        computeOutputPattern()
+
+        //New stuff
+        val textSplitter = TextSplitter(newInput)
+        println(textSplitter.words)
+        println(textSplitter.punctuationMarks)
+
+        wizardDisplay = WizardDisplay(textSplitter, this)
+        view.showResultingPattern(wizardDisplay.getOutputPattern())
+    }
+
+    override fun onWizardChanges() {
+        println(wizardDisplay.getOutputPattern().pattern)
+        view.showResultingPattern(wizardDisplay.getOutputPattern())
     }
 
     override fun onSuggestionClick(recognizerMatch: RecognizerMatch) {
@@ -92,7 +107,7 @@ class UiController : DisplayContract.Controller {
 
     companion object {
         const val VAL_EXAMPLE_INPUT =
-            "2020-03-12T13:34:56.123Z INFO  [org.example.Class]: This is a #simple #logline containing a 'value'."
+            "May 15, 2022"
         private const val MAX_INPUT_LENGTH = 1000
     }
 }

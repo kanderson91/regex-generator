@@ -31,7 +31,7 @@ private fun initRegexGeneratorUnsafe() {
     val showGuide = ApplicationSettings.isNewUser()
     ApplicationSettings.storeUserLastInfo()
 
-    // show guide for new users
+    //show guide for new users
     if (showGuide) {
         presenter.showInitialUserGuide()
     }
